@@ -191,35 +191,44 @@
   let currentUser = null;
 
   // 1. Auth Listener
+  // *** CRITICAL CHANGE HERE TO FIX THE REDIRECT LOOP ***
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = 'login.html';
-      return;
-    }
-    currentUser = user;
-    
-    // FIX: User Name Personalization
-    const displayName = user.displayName || user.email.split('@')[0];
-    sideUser.textContent = displayName;
-    greeting.textContent = `Welcome, ${displayName}`;
-    
-    // Set hidden fields for custom Paystack form
-    payEmailHidden.value = user.email;
-    payNameHidden.value = displayName;
+    // Wrap the sensitive logic in a small delay to allow Firebase Persistence 
+    // to load the token from local storage first.
+    setTimeout(() => {
+        if (!user) {
+            console.log("No user session found after persistence check. Redirecting to login.");
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        // If user is found, proceed with dashboard initialization:
+        currentUser = user;
+        
+        // FIX: User Name Personalization
+        const displayName = user.displayName || user.email.split('@')[0];
+        sideUser.textContent = displayName;
+        greeting.textContent = `Welcome, ${displayName}`;
+        
+        // Set hidden fields for custom Paystack form
+        payEmailHidden.value = user.email;
+        payNameHidden.value = displayName;
 
-    // 2. Real-time Balance
-    onSnapshot(doc(db, "users", user.uid), (doc) => {
-      if (doc.exists()) {
-        const bal = doc.data().balance || 0;
-        balanceEl.textContent = formatCurrency(bal);
-      } else {
-        balanceEl.textContent = '₦0.00';
-      }
-    });
+        // 2. Real-time Balance
+        onSnapshot(doc(db, "users", user.uid), (doc) => {
+          if (doc.exists()) {
+            const bal = doc.data().balance || 0;
+            balanceEl.textContent = formatCurrency(bal);
+          } else {
+            balanceEl.textContent = '₦0.00';
+          }
+        });
 
-    // 3. Load Transactions
-    loadTransactions(user.uid);
+        // 3. Load Transactions
+        loadTransactions(user.uid);
+    }, 150); // 150ms delay is usually safe for persistence loading
   });
+  // *** END OF CRITICAL CHANGE ***
 
   // --- NAVIGATION & MODALS ---
   
