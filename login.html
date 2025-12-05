@@ -102,7 +102,7 @@
   /* Forms */
   .form-wrapper { 
     position: relative; 
-    min-height: 420px; /* Increased height to accommodate stacked names */
+    min-height: 420px;
   }
 
   form {
@@ -166,10 +166,10 @@
     transform: translateY(-2px); 
   }
 
-  /* --- FIXED: Name fields are now stacked vertically --- */
+  /* --- Name fields are stacked vertically --- */
   .name-fields {
     display: flex;
-    flex-direction: column; /* This makes them stack */
+    flex-direction: column;
     gap: 15px;
     width: 100%;
   }
@@ -387,7 +387,7 @@
     getDoc 
   } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // Firebase Configuration
+  // Firebase Configuration (USE YOUR REAL CONFIG HERE)
   const firebaseConfig = {
     apiKey: "AIzaSyDRnNoRJ4Zgtu-KEZAdOAKtou2LV9rdL5c",
     authDomain: "sublime-log.firebaseapp.com",
@@ -416,26 +416,48 @@
   const resetEmailInput = document.getElementById('reset-email');
   const resetError = document.getElementById('reset-error');
   const resetSuccess = document.getElementById('reset-success');
+  const loader = document.getElementById('loader');
+  
+  // Helper to handle safe redirect
+  async function handleRedirect(user) {
+    if (window.location.pathname.includes('dashboard1.html')) return;
 
-  // --- LOGIN CHECK ON PAGE LOAD ---
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      console.log("Session detected, verifying...");
-      // Check if user is in DB before redirecting
-      const userDocRef = doc(db, "users", user.uid);
-      try {
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-           // Redirect found
-           window.location.href = "dashboard1.html";
-        }
-      } catch (e) {
-        console.error("Error verifying user", e);
+    // Check if user is in DB before redirecting
+    const userDocRef = doc(db, "users", user.uid);
+    try {
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+         console.log("Redirecting to dashboard...");
+         window.location.href = "dashboard1.html";
+      } else {
+         // Log out if DB record is missing
+         await auth.signOut();
+         loader.style.display = 'none';
+         console.error("User found in Auth but not in DB. Logged out.");
       }
+    } catch (e) {
+      console.error("Error verifying user", e);
+      loader.style.display = 'none';
     }
+  }
+
+  // --- CORE FIX: Login Check and Redirection (Single Source of Truth) ---
+  onAuthStateChanged(auth, async (user) => {
+    // Add a small timeout to let the persistence layer fully settle.
+    // This is the most effective way to prevent the race condition.
+    setTimeout(async () => {
+      if (user) {
+        // If user is present, always redirect. This covers both initial load 
+        // and successful sign-in/sign-up events.
+        await handleRedirect(user);
+      } else {
+        // Only hide the loader if no user is found after the check
+        loader.style.display = 'none';
+      }
+    }, 100); 
   });
 
-  // Tab Switching
+  // Tab Switching (Remains the same)
   window.switchTab = (tab) => {
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
@@ -454,7 +476,7 @@
     }
   };
 
-  // Forgot Password
+  // Forgot Password (Remains the same)
   forgotPasswordLink.addEventListener('click', (e) => {
     e.preventDefault();
     resetError.textContent = '';
@@ -511,14 +533,13 @@
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
-    const loader = document.getElementById('loader');
     const loginError = document.getElementById('login-error');
     
     loader.style.display = 'flex';
     loginError.textContent = '';
 
     try {
-      // 1. Authenticate
+      // 1. Authenticate (This will fire the onAuthStateChanged listener)
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       
@@ -526,14 +547,16 @@
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
       
-      if (userDocSnap.exists()) {
-        console.log("Login success. Redirecting...");
-        // 3. FORCE REDIRECT HERE - Do not wait for listener
-        window.location.href = "dashboard1.html";
-      } else {
+      if (!userDocSnap.exists()) {
+        // If DB record is missing, immediately sign out and throw an error.
         await auth.signOut();
         throw new Error('User not registered. Please sign up first.');
       }
+      
+      console.log("Login success. Listener will handle the redirect.");
+      // CRITICAL: DO NOT call window.location.href here. 
+      // The onAuthStateChanged listener will handle the redirect safely.
+
     } catch (error) {
       loader.style.display = 'none';
       loginError.textContent = getFriendlyError(error.code || error.message);
@@ -548,7 +571,6 @@
     const email = document.getElementById('signup-email').value.trim();
     const pass = document.getElementById('signup-password').value;
     const confirm = document.getElementById('signup-confirm').value;
-    const loader = document.getElementById('loader');
     const signupError = document.getElementById('signup-error');
 
     if (!fname || !sname) {
@@ -568,7 +590,7 @@
     signupError.textContent = '';
 
     try {
-      // 1. Create Auth User
+      // 1. Create Auth User (This will fire the onAuthStateChanged listener)
       const userCred = await createUserWithEmailAndPassword(auth, email, pass);
       const user = userCred.user;
       
@@ -579,16 +601,16 @@
       await setDoc(doc(db, "users", user.uid), {
         firstName: fname,
         surname: sname,
-        name: fullName, // Added 'name' field for dashboard compatibility
+        name: fullName,
         email: email,
         balance: 0,
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       });
 
-      console.log("Account created. Redirecting...");
-      // 3. FORCE REDIRECT
-      window.location.href = "dashboard1.html";
+      console.log("Account created. Listener will handle the redirect.");
+      // CRITICAL: DO NOT call window.location.href here. 
+      // The onAuthStateChanged listener will handle the redirect safely.
       
     } catch (error) {
       loader.style.display = 'none';
@@ -603,7 +625,7 @@
       'auth/user-not-found': 'No account found with this email',
       'auth/wrong-password': 'Incorrect password',
       'auth/email-already-in-use': 'Email already registered',
-      'auth/weak-password': 'Password is too weak',
+      'auth/weak-password': 'Password must be at least 6 characters',
       'auth/too-many-requests': 'Too many attempts. Try again later',
       'User not registered. Please sign up first.': 'User not registered. Please sign up first.',
     };
