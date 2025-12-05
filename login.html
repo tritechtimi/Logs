@@ -2,348 +2,614 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sublime Logs</title>
-
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Lobster&family=David+Libre&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sublime Logs - Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Reset */
-  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --primary: #8e44ad;
+    --secondary: #e91e63;
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+  }
 
-  /* Body */
+  * { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+  }
+
   body {
-    font-family: 'Arial', sans-serif;
-    background-color: #fdf6e3; /* creamy white */
-    color: #000;
-  }
-
-  /* Navbar */
-  nav {
-    position: sticky;
-    top: 0;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #8e44ad);
+    min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 2rem;
-    background: linear-gradient(90deg, #8e2de2, #ff0080);
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  }
-  nav .logo {
-    display: flex; align-items: center;
-  }
-  nav .logo img {
-    width:40px; height:40px; border-radius:50%; margin-right:10px;
-  }
-  nav .logo span {
-    font-weight:bold; font-size:1.5rem; color:#fff;
-  }
-  nav ul {
-    list-style:none; display:flex; align-items:center;
-  }
-  nav ul li {
-    margin-left:1.5rem;
-  }
-  nav ul li a {
-    color:#fff; text-decoration:none; font-weight:600; transition:0.3s;
-  }
-  nav ul li a:hover {
-    color:#ffd700; text-shadow:0 0 8px #ffd700;
-  }
-
-  /* Hamburger for mobile */
-  .hamburger {
-    display:none; cursor:pointer; flex-direction: column; gap:5px;
-  }
-  .hamburger div {
-    width:25px; height:3px; background:white; transition:0.3s;
-  }
-  @media(max-width:768px){
-    nav ul { 
-      display:flex; flex-direction:column; 
-      position:fixed; top:0; left:-40%; 
-      height:100%; width:40%; 
-      background:#2c003e; padding:2rem; 
-      transition: left 0.3s ease; z-index:999; 
-    }
-    nav ul.show { left:0; }
-    .hamburger { display:flex; }
-  }
-
-  /* Hero Section */
-  .hero {
-    position: relative;
-    height:60vh; /* reduced height */
-    display: flex;
-    flex-direction: column; /* stack logo + text vertically */
-    justify-content: center; /* center content vertically */
-    align-items: center; /* center horizontally */
-    text-align: center;
-    overflow:hidden;
-    background-color:#0f0c29; /* fallback */
-  }
-  .hero img.bg-slide {
-    position:absolute;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    top:0; left:0;
-    opacity:0;
-    transition: opacity 1s ease-in-out;
-  }
-  .hero img.bg-slide.active { opacity:1; }
-  .hero .hero-content {
-    position: relative;
-    z-index:2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    color: #fff;
+    padding: 20px;
   }
-  .hero .hero-logo {
-    width: 120px; 
-    height: 120px; 
-    border-radius: 50%; 
-    margin-bottom: 1rem;
-    border: 3px solid #ffd700;
-  }
-  .hero .welcome {
-    font-size: 1.5rem; 
-    margin-bottom: 0.5rem;
-    font-family: 'David Libre', serif;
-    background: rgba(255,255,255,0.3);
-    display: inline-block;
-    padding: 0 0.5rem;
-    border-radius: 6px;
-  }
-  .hero h1 {
-    font-family: 'Lobster', cursive;
-    font-size: 4rem;
-    margin-bottom: 0.5rem;
-    background: rgba(255,255,255,0.3);
-    display: inline-block;
-    padding: 0 0.5rem;
-    border-radius: 8px;
-  }
-  .hero .ticker {
-    display: block; 
-    width: 100%; 
+
+  .container {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
     overflow: hidden;
-    white-space: nowrap; 
+  }
+
+  .brand {
     text-align: center;
-    font-family: 'David Libre', serif;
-    font-size: 1.25rem;
-    animation: ticker 15s linear infinite;
-    color: #ffd700;
-    font-weight: bold;
-    background: rgba(0,0,0,0.4);
-    padding: 0.25rem;
-    border-radius: 6px;
-  }
-  @keyframes ticker {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+    margin-bottom: 30px;
   }
 
-  /* Floating Card Section */
-  .card-section {
-    padding:4rem 1rem;
-    display:flex; justify-content:center;
-    background:#fdf6e3; /* creamy white */
-  }
-  .card {
-    background:#f7f7f7; /* light card background */
-    color:#000; padding:2rem; border-radius:12px; max-width:800px; width:100%;
-    box-shadow:0 8px 20px rgba(0,0,0,0.2); text-align:center;
-  }
-  .card h2 { margin-bottom:1rem; color:#8e2de2; font-size:2rem; }
-  .card p { margin-bottom:2rem; font-size:1.1rem; line-height:1.6; }
-  .card button {
-    padding:0.75rem 2rem;
-    border:none; border-radius:8px;
-    background:linear-gradient(90deg, #ff0080, #8e2de2);
-    color:#fff; font-weight:bold; font-size:1.1rem;
-    cursor:pointer; transition:0.3s;
-  }
-  .card button:hover {
-    transform:scale(1.05);
-    box-shadow:0 0 15px #ff0080;
+  .brand h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 2em;
+    margin: 0;
+    background: linear-gradient(90deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
+  .brand p { 
+    margin: 5px 0 0; 
+    font-size: 0.9em; 
+    opacity: 0.7; 
+  }
+
+  /* Tab Slider */
+  .toggle-box {
+    display: flex;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    position: relative;
+    padding: 4px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    z-index: 2;
+    transition: color 0.3s;
+  }
+
+  .slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 1;
+  }
+
+  /* Forms */
+  .form-wrapper { 
+    position: relative; 
+    min-height: 420px; /* Increased height to accommodate stacked names */
+  }
+
+  form {
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: absolute; 
+    width: 100%; 
+    top: 0; 
+    left: 0;
+  }
+
+  form.hidden { 
+    opacity: 0; 
+    pointer-events: none; 
+    transform: translateX(20px); 
+    visibility: hidden; 
+  }
+  
+  form.active { 
+    opacity: 1; 
+    pointer-events: all; 
+    transform: translateX(0); 
+    visibility: visible; 
+  }
+
+  input {
+    width: 100%; 
+    padding: 14px 16px; 
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff; 
+    font-size: 16px; 
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  input:focus { 
+    border-color: var(--secondary); 
+    background: rgba(255, 255, 255, 0.1); 
+  }
+
+  button {
+    width: 100%; 
+    padding: 14px; 
+    border-radius: 12px; 
+    border: none;
+    font-size: 16px; 
+    font-weight: 700; 
+    color: white; 
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3); 
+    margin-top: 10px;
+    transition: transform 0.2s;
+  }
+  
+  button:hover { 
+    transform: translateY(-2px); 
+  }
+
+  /* --- FIXED: Name fields are now stacked vertically --- */
+  .name-fields {
+    display: flex;
+    flex-direction: column; /* This makes them stack */
+    gap: 15px;
+    width: 100%;
+  }
+
+  /* Forgot password link */
+  .forgot-link {
+    text-align: right;
+    margin-top: -5px;
+    margin-bottom: 5px;
+  }
+
+  .forgot-link a {
+    color: #e91e63;
+    font-size: 0.85em;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .forgot-link a:hover {
+    text-decoration: underline;
+  }
+
+  /* Error and Success messages */
+  .error-msg { 
+    color: #ff6b6b; 
+    font-size: 0.85em; 
+    text-align: center; 
+    margin-top: 10px; 
+    min-height: 20px; 
+  }
+
+  .success-msg {
+    color: #4caf50;
+    font-size: 0.85em;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 20px;
+  }
+
+  /* Loader */
+  .loader {
+    display: none; 
+    position: absolute; 
+    top:0; 
+    left:0; 
+    width:100%; 
+    height:100%;
+    background: rgba(0,0,0,0.6); 
+    backdrop-filter: blur(5px); 
+    z-index: 10;
+    justify-content: center; 
+    align-items: center; 
+    border-radius: 24px;
+  }
+  
+  .spinner {
+    width: 40px; 
+    height: 40px; 
+    border: 4px solid #fff;
+    border-top-color: transparent; 
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin { 
+    to { transform: rotate(360deg); } 
+  }
+
+  /* Responsive Design */
+  @media (max-width: 480px) {
+    .container {
+      padding: 25px;
+      margin: 10px;
+    }
+    
+    input {
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+  }
+
+  /* Forgot password modal */
+  .forgot-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .forgot-modal-content {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    margin: 20px;
+  }
+
+  .forgot-modal h3 {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .forgot-modal p {
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    text-align: center;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .modal-buttons button {
+    flex: 1;
+    margin: 0;
+  }
+
+  .modal-buttons button.secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
 </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav>
-  <div class="logo">
-    <img src="logo1.jpg" alt="Logo">
-    <span>Sublime Logs</span>
+<div class="forgot-modal" id="forgotModal">
+  <div class="forgot-modal-content">
+    <h3>Reset Password</h3>
+    <p>Enter your email address and we'll send you a link to reset your password.</p>
+    
+    <input type="email" id="reset-email" placeholder="Enter your email" style="margin-bottom: 15px;">
+    
+    <div class="error-msg" id="reset-error"></div>
+    <div class="success-msg" id="reset-success"></div>
+    
+    <div class="modal-buttons">
+      <button class="secondary" id="cancel-reset">Cancel</button>
+      <button id="send-reset">Send Reset Link</button>
+    </div>
   </div>
-  <ul>
-    <li><a href="#">Home</a></li>
-    <li><a href="#about-section">About</a></li>
-    <li><a href="login.html" target="_blank">Login</a></li>
-  </ul>
-  <div class="hamburger" id="hamburger">
-    <div></div><div></div><div></div>
+</div>
+
+<div class="container">
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
   </div>
-</nav>
 
-<!-- Hero Section -->
-<section class="hero">
-  <!-- Background Slides -->
-  <img src="log1.jpeg" class="bg-slide active">
-  <img src="log2.jpeg" class="bg-slide">
-  <img src="log3.jpeg" class="bg-slide">
-  <img src="log4.jpeg" class="bg-slide">
-  <img src="log5.jpeg" class="bg-slide">
-  <img src="log6.jpeg" class="bg-slide">
-
-  <!-- Hero Content -->
-  <div class="hero-content">
-    <img src="logo1.jpg" class="hero-logo" alt="Logo">
-    <div class="welcome">Welcome to …</div>
+  <div class="brand">
     <h1>Sublime Logs</h1>
-    <div class="ticker">Connecting the world for better communication</div>
+    <p>Access your dashboard</p>
   </div>
-</section>
 
-<!-- Floating Card Section -->
-<section class="card-section">
-  <div class="card">
-    <h2>Reliable SMS Numbers & International Gift Sending</h2>
-    <p>Buy high-quality, non-VoIP phone numbers for SMS verification worldwide. Sublime Logs ensures compatibility with multiple services, providing a secure, hassle-free way to receive verification codes instantly. We also make it easy to send gift items internationally to anyone, anywhere.</p>
-    <button onclick="window.open('login.html','_blank')">Get Started</button>
+  <div class="toggle-box">
+    <div class="slider" id="slider"></div>
+    <div class="toggle-btn" onclick="switchTab('login')">Login</div>
+    <div class="toggle-btn" onclick="switchTab('signup')">Sign Up</div>
   </div>
-</section>
 
-<script>
-  // Hamburger toggle
-  const hamburger = document.getElementById('hamburger');
-  const navLinks = document.querySelector('nav ul');
-  hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
+  <div class="form-wrapper">
+    <form id="login-form" class="active">
+      <input type="email" id="login-email" placeholder="Email Address" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      
+      <div class="forgot-link">
+        <a href="#" id="forgot-password">Forgot Password?</a>
+      </div>
+      
+      <button type="submit">Log In</button>
+      <div class="error-msg" id="login-error"></div>
+    </form>
+
+    <form id="signup-form" class="hidden">
+      <div class="name-fields">
+        <input type="text" id="first-name" placeholder="First Name" required>
+        <input type="text" id="surname" placeholder="Surname" required>
+      </div>
+      <input type="email" id="signup-email" placeholder="Email Address" required>
+      <input type="password" id="signup-password" placeholder="Create Password" required minlength="6">
+      <input type="password" id="signup-confirm" placeholder="Confirm Password" required>
+      <button type="submit">Create Account</button>
+      <div class="error-msg" id="signup-error"></div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    updateProfile, 
+    onAuthStateChanged, 
+    setPersistence, 
+    browserLocalPersistence,
+    sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  
+  import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    getDoc 
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDRnNoRJ4Zgtu-KEZAdOAKtou2LV9rdL5c",
+    authDomain: "sublime-log.firebaseapp.com",
+    projectId: "sublime-log",
+    storageBucket: "sublime-log.firebasestorage.app",
+    messagingSenderId: "644554254089",
+    appId: "1:644554254089:web:dd3374c9468046a5a015d8",
+    measurementId: "G-YMPGVWCK16"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Set persistence
+  setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Persistence error:", error);
   });
 
-  // Hero image slider
-  const slides = document.querySelectorAll('.bg-slide');
-  let currentSlide = 0;
-  setInterval(() => {
-    slides[currentSlide].classList.remove('active');
-    currentSlide = (currentSlide+1) % slides.length;
-    slides[currentSlide].classList.add('active');
-  }, 4000); // every 4 seconds
+  // UI Elements
+  const forgotModal = document.getElementById('forgotModal');
+  const forgotPasswordLink = document.getElementById('forgot-password');
+  const cancelResetBtn = document.getElementById('cancel-reset');
+  const sendResetBtn = document.getElementById('send-reset');
+  const resetEmailInput = document.getElementById('reset-email');
+  const resetError = document.getElementById('reset-error');
+  const resetSuccess = document.getElementById('reset-success');
+
+  // --- LOGIN CHECK ON PAGE LOAD ---
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("Session detected, verifying...");
+      // Check if user is in DB before redirecting
+      const userDocRef = doc(db, "users", user.uid);
+      try {
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+           // Redirect found
+           window.location.href = "dashboard1.html";
+        }
+      } catch (e) {
+        console.error("Error verifying user", e);
+      }
+    }
+  });
+
+  // Tab Switching
+  window.switchTab = (tab) => {
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const slider = document.getElementById('slider');
+    document.getElementById('login-error').textContent = ''; 
+    document.getElementById('signup-error').textContent = '';
+
+    if (tab === 'login') {
+      loginForm.className = 'active'; 
+      signupForm.className = 'hidden';
+      slider.style.transform = 'translateX(0)';
+    } else {
+      signupForm.className = 'active'; 
+      loginForm.className = 'hidden';
+      slider.style.transform = 'translateX(100%)';
+    }
+  };
+
+  // Forgot Password
+  forgotPasswordLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    resetError.textContent = '';
+    resetSuccess.textContent = '';
+    resetEmailInput.value = '';
+    forgotModal.style.display = 'flex';
+  });
+
+  cancelResetBtn.addEventListener('click', () => {
+    forgotModal.style.display = 'none';
+  });
+
+  sendResetBtn.addEventListener('click', async () => {
+    const email = resetEmailInput.value.trim();
+    if (!email) {
+      resetError.textContent = 'Please enter your email address';
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      resetError.textContent = 'Please enter a valid email address';
+      return;
+    }
+    sendResetBtn.textContent = 'Sending...';
+    sendResetBtn.disabled = true;
+    resetError.textContent = '';
+    resetSuccess.textContent = '';
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      resetSuccess.textContent = 'Password reset email sent! Check your inbox.';
+      resetEmailInput.value = '';
+      setTimeout(() => {
+        forgotModal.style.display = 'none';
+        sendResetBtn.textContent = 'Send Reset Link';
+        sendResetBtn.disabled = false;
+      }, 3000);
+    } catch (error) {
+      console.error("Reset error:", error);
+      resetError.textContent = getFriendlyError(error.code);
+      sendResetBtn.textContent = 'Send Reset Link';
+      sendResetBtn.disabled = false;
+    }
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === forgotModal) {
+      forgotModal.style.display = 'none';
+    }
+  });
+
+  // --- LOGIN LOGIC ---
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const loader = document.getElementById('loader');
+    const loginError = document.getElementById('login-error');
+    
+    loader.style.display = 'flex';
+    loginError.textContent = '';
+
+    try {
+      // 1. Authenticate
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // 2. Verify in Database
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (userDocSnap.exists()) {
+        console.log("Login success. Redirecting...");
+        // 3. FORCE REDIRECT HERE - Do not wait for listener
+        window.location.href = "dashboard1.html";
+      } else {
+        await auth.signOut();
+        throw new Error('User not registered. Please sign up first.');
+      }
+    } catch (error) {
+      loader.style.display = 'none';
+      loginError.textContent = getFriendlyError(error.code || error.message);
+    }
+  });
+
+  // --- SIGNUP LOGIC ---
+  document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fname = document.getElementById('first-name').value.trim();
+    const sname = document.getElementById('surname').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const pass = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    const loader = document.getElementById('loader');
+    const signupError = document.getElementById('signup-error');
+
+    if (!fname || !sname) {
+      signupError.textContent = "Please enter both first name and surname";
+      return;
+    }
+    if (pass.length < 6) {
+      signupError.textContent = "Password must be at least 6 characters";
+      return;
+    }
+    if (pass !== confirm) {
+      signupError.textContent = "Passwords do not match.";
+      return;
+    }
+
+    loader.style.display = 'flex';
+    signupError.textContent = '';
+
+    try {
+      // 1. Create Auth User
+      const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+      const user = userCred.user;
+      
+      const fullName = `${fname} ${sname}`;
+      await updateProfile(user, { displayName: fullName });
+      
+      // 2. Save to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        firstName: fname,
+        surname: sname,
+        name: fullName, // Added 'name' field for dashboard compatibility
+        email: email,
+        balance: 0,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString()
+      });
+
+      console.log("Account created. Redirecting...");
+      // 3. FORCE REDIRECT
+      window.location.href = "dashboard1.html";
+      
+    } catch (error) {
+      loader.style.display = 'none';
+      signupError.textContent = getFriendlyError(error.code);
+    }
+  });
+
+  function getFriendlyError(code) {
+    const errors = {
+      'auth/invalid-email': 'Invalid email address',
+      'auth/user-disabled': 'This account has been disabled',
+      'auth/user-not-found': 'No account found with this email',
+      'auth/wrong-password': 'Incorrect password',
+      'auth/email-already-in-use': 'Email already registered',
+      'auth/weak-password': 'Password is too weak',
+      'auth/too-many-requests': 'Too many attempts. Try again later',
+      'User not registered. Please sign up first.': 'User not registered. Please sign up first.',
+    };
+    return errors[code] || `Error: ${code}`;
+  }
 </script>
-<!-- About Section -->
-<section id="about-section" style="padding:4rem 1rem; background:#fdf6e3;">
-  <div class="about-container" style="max-width:1200px; margin:0 auto; text-align:center;">
 
-    <!-- Headline -->
-    <h2 style="color:#8e2de2; font-size:2.5rem; margin-bottom:2rem;">Reliable SMS Provider</h2>
-
-    <!-- About Us Card -->
-    <div class="card" style="background:#fff; padding:2rem; border-radius:12px; margin-bottom:3rem; box-shadow:0 8px 20px rgba(0,0,0,0.15);">
-      <h3 style="font-size:1.8rem; margin-bottom:1rem;">About Sublime Logs</h3>
-      <p style="font-size:1.1rem; line-height:1.8; color:#333;">
-        Sublime Logs is your trusted partner for SMS verification and international gift sending. 
-        We provide high-quality, non-VoIP phone numbers for instant verification codes anywhere in the world. 
-        With our platform, sending gifts internationally has never been easier, connecting people and businesses globally.
-      </p>
-    </div>
-
-    <!-- Why Choose Sublime Logs -->
-    <h3 style="color:#8e2de2; font-size:2rem; margin-bottom:2rem;">Why Choose Sublime Logs?</h3>
-
-    <div class="services-container" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; margin-bottom:3rem;">
-
-      <!-- Service Card Template -->
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">📱</div>
-        <h4>Reliable Numbers</h4>
-        <p>High-quality, non-VoIP numbers for instant SMS verification.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">🌍</div>
-        <h4>Global Coverage</h4>
-        <p>Numbers available in multiple countries for worldwide use.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">🔒</div>
-        <h4>Secure & Private</h4>
-        <p>Your privacy is our priority with fully secure numbers.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">⚡</div>
-        <h4>Fast Delivery</h4>
-        <p>Receive SMS codes in real-time without delays.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">🔗</div>
-        <h4>Easy Integration</h4>
-        <p>Our numbers work seamlessly across all platforms.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">🎁</div>
-        <h4>Gift Sending</h4>
-        <p>Send gifts internationally with ease.</p>
-      </div>
-
-      <div class="service-card" style="background:#fff; padding:2rem; border-radius:12px; width:250px; box-shadow:0 8px 20px rgba(0,0,0,0.15); text-align:center;">
-        <div style="font-size:3rem; margin-bottom:1rem;">🕒</div>
-        <h4>24/7 Support</h4>
-        <p>Our team is always available to assist you.</p>
-      </div>
-
-    </div>
-
-    <!-- Testimonials Slider -->
-    <div class="card" style="background:#fff; padding:2rem; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); margin-bottom:3rem;">
-      <h3 style="font-size:1.8rem; margin-bottom:2rem;">What Our Clients Say</h3>
-      <div class="testimonial-slider" style="position:relative; overflow:hidden; max-width:700px; margin:0 auto;">
-        <div class="testimonial-track" style="display:flex; transition: transform 0.5s ease;">
-          <div class="testimonial" style="min-width:100%; text-align:center; padding:1rem;">
-            <p>"Sublime Logs made SMS verification seamless and fast for our team. Truly professional!"</p>
-            <strong>- Fola Logs</strong>
-          </div>
-          <div class="testimonial" style="min-width:100%; text-align:center; padding:1rem;">
-            <p>"Reliable numbers and amazing customer support. I trust Sublime Logs for all my verification needs."</p>
-            <strong>- OMN TV</strong>
-          </div>
-          <div class="testimonial" style="min-width:100%; text-align:center; padding:1rem;">
-            <p>"Gift sending internationally has never been easier. Sublime Logs is simply the best!"</p>
-            <strong>- Kenny Konnect TV</strong>
-          </div>
-          <div class="testimonial" style="min-width:100%; text-align:center; padding:1rem;">
-            <p>"Fast, secure, and easy to use. Sublime Logs is my go-to for SMS verification."</p>
-            <strong>- Jane A., Tech Entrepreneur</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- Testimonials Slider Script -->
-<script>
-const track = document.querySelector('.testimonial-track');
-const slides = document.querySelectorAll('.testimonial');
-let currentIndex = 0;
-
-function nextSlide() {
-  currentIndex = (currentIndex + 1) % slides.length;
-  track.style.transform = `translateX(-${currentIndex * 100}%)`;
-}
-
-setInterval(nextSlide, 4000); // change slide every 4 seconds
-</script>
 </body>
-  </html>
+</html>
