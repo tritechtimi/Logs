@@ -29,78 +29,99 @@
   .buy-button{display:inline-block;padding:12px 16px;border-radius:12px;background:linear-gradient(90deg,#ff8a65,#ffb74d);color:#051018;font-weight:700;cursor:pointer}
   .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(2,6,12,0.6);z-index:999}
   .modal.open{display:flex}
-  /* Adjusted modal-card width for the custom form */
   .modal-card{width:400px;max-width:95%;background:#071018;padding:24px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
   .form-row{display:flex;gap:8px;margin-top:12px}
   input, select{padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:#e6eef6;outline:none; width:100%}
   .tx-list{margin-top:12px;max-height:320px;overflow:auto;background:var(--card);padding:12px;border-radius:10px}
   .tx-item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)}
   .tx-item:last-child{border-bottom:none}
+  
+  /* Initial Loading State to prevent Flash/Loop */
+  #dashboard-content { display: none; }
+  .page-loader {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: #0b0f13; z-index: 9999;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .spinner {
+    width: 40px; height: 40px; 
+    border: 4px solid #fff; border-top-color: transparent; 
+    border-radius: 50%; animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   @media(max-width:920px){.sidebar{display:none}.card-row{flex-direction:column}}
 </style>
 </head>
 <body>
-<aside class="sidebar">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">SL</div>
-    <div>
-      <h1 style="margin:0;font-size:16px">Sublime Logs</h1>
-      <p style="margin:0;font-size:12px;color:var(--muted)">Wallet & Numbers</p>
-    </div>
-  </div>
-  <nav>
-    <a href="dashboard1.html" class="nav-link active">Dashboard</a>
-    <a href="wallet.html" class="nav-link">Wallet</a>
-    <a href="transactions.html" class="nav-link">Transactions</a>
-    <a href="profile.html" class="nav-link">Profile</a>
-    <a href="#" class="nav-link" id="btn-logout">Logout</a>
-  </nav>
-  <div style="margin-top:auto;font-size:12px;color:var(--muted)">
-    Signed in as:
-    <div id="side-user" style="margin-top:8px;font-weight:600">Loading...</div>
-  </div>
-</aside>
 
-<main class="main">
-  <div class="top-bar">
-    <div>
-      <h2 id="greeting">Welcome</h2>
-      <p class="small" id="subg">Your dashboard</p>
-    </div>
-    <div class="actions">
-      <a href="wallet.html" class="btn" id="open-wallet" style="text-decoration:none;">Open Wallet</a>
-      <button class="btn secondary" id="open-add-money">Fund Wallet</button>
-    </div>
-  </div>
+<div class="page-loader" id="page-loader">
+  <div class="spinner"></div>
+</div>
 
-  <div class="card-row">
-    <div class="card">
-      <div class="small">Available Balance</div>
-      <div style="height:8px"></div>
-      <div class="balance-value" id="balance">₦0.00</div>
+<div id="dashboard-content" style="width:100%; display:flex;">
+  <aside class="sidebar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo">SL</div>
+      <div>
+        <h1 style="margin:0;font-size:16px">Sublime Logs</h1>
+        <p style="margin:0;font-size:12px;color:var(--muted)">Wallet & Numbers</p>
+      </div>
     </div>
-    <div class="card big-card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div class="small">Buy Number</div>
-          <div style="height:6px"></div>
-          <div style="font-weight:700;font-size:18px">Purchase a temporary number</div>
-          <div class="small" style="margin-top:6px">WhatsApp, Google, Telegram, Facebook, etc.</div>
-        </div>
-        <div>
-          <div class="buy-button" id="open-buy-modal">Buy Number</div>
+    <nav>
+      <a href="dashboard1.html" class="nav-link active">Dashboard</a>
+      <a href="wallet.html" class="nav-link">Wallet</a>
+      <a href="transactions.html" class="nav-link">Transactions</a>
+      <a href="profile.html" class="nav-link">Profile</a>
+      <a href="#" class="nav-link" id="btn-logout">Logout</a>
+    </nav>
+    <div style="margin-top:auto;font-size:12px;color:var(--muted)">
+      Signed in as:
+      <div id="side-user" style="margin-top:8px;font-weight:600">...</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top-bar">
+      <div>
+        <h2 id="greeting">Welcome</h2>
+        <p class="small" id="subg">Your dashboard</p>
+      </div>
+      <div class="actions">
+        <a href="wallet.html" class="btn" id="open-wallet" style="text-decoration:none;">Open Wallet</a>
+        <button class="btn secondary" id="open-add-money">Fund Wallet</button>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card">
+        <div class="small">Available Balance</div>
+        <div style="height:8px"></div>
+        <div class="balance-value" id="balance">...</div>
+      </div>
+      <div class="card big-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="small">Buy Number</div>
+            <div style="height:6px"></div>
+            <div style="font-weight:700;font-size:18px">Purchase a temporary number</div>
+            <div class="small" style="margin-top:6px">WhatsApp, Google, Telegram, Facebook, etc.</div>
+          </div>
+          <div>
+            <div class="buy-button" id="open-buy-modal">Buy Number</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <section>
-    <h3 style="margin:20px 0 8px 0">Recent activity</h3>
-    <div class="tx-list" id="tx-list">
-      <div class="tx-item"><div class="small">Loading…</div></div>
-    </div>
-  </section>
-</main>
+    <section>
+      <h3 style="margin:20px 0 8px 0">Recent activity</h3>
+      <div class="tx-list" id="tx-list">
+        <div class="tx-item"><div class="small">Loading…</div></div>
+      </div>
+    </section>
+  </main>
+</div>
 
 <div class="modal" id="add-money-modal">
   <div class="modal-card">
@@ -109,10 +130,8 @@
       <div class="small">Enter amount to fund your wallet securely.</div>
       <div style="height:10px"></div>
       <input type="number" id="pay-amount" placeholder="Amount in Naira (e.g. 1000)" min="50" required />
-      
       <input type="email" id="pay-email-hidden" style="display:none;" required/>
       <input type="text" id="pay-name-hidden" style="display:none;" />
-
       <div style="height:15px"></div>
       <div style="display:flex;justify-content:flex-end;gap:8px">
         <button type="button" class="btn secondary" id="close-add-money">Cancel</button>
@@ -145,11 +164,16 @@
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <script type="module">
-  // --- CONFIG ---
   const PAYSTACK_PUBLIC_KEY = 'pk_live_20505aa86cec6458bf2cc8cd926ecc06b87ff492';
   
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signOut,
+    setPersistence,
+    browserLocalPersistence 
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
   import { getFirestore, doc, onSnapshot, collection, addDoc, query, orderBy, limit, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -166,197 +190,146 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // UI References
+  // Set persistence to Local to ensure it sticks across redirects
+  setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+  // UI Refs
+  const pageLoader = document.getElementById('page-loader');
+  const dashboardContent = document.getElementById('dashboard-content');
   const balanceEl = document.getElementById('balance');
   const sideUser = document.getElementById('side-user');
   const greeting = document.getElementById('greeting');
   const txList = document.getElementById('tx-list');
-  const openWalletBtn = document.getElementById('open-wallet');
-  const openAddMoneyBtn = document.getElementById('open-add-money');
-  const addMoneyModal = document.getElementById('add-money-modal');
-  const closeAddMoneyBtn = document.getElementById('close-add-money');
-  
-  // Custom Payment Form References
-  const depositForm = document.getElementById('deposit-form');
-  const payAmountInput = document.getElementById('pay-amount');
-  const startPaySubmitBtn = document.getElementById('start-paystack-submit'); // Updated ID
-  const payEmailHidden = document.getElementById('pay-email-hidden');
-  const payNameHidden = document.getElementById('pay-name-hidden');
-  
-  // Buy Number Refs
-  const openBuyBtn = document.getElementById('open-buy-modal');
-  const buyModal = document.getElementById('buy-modal');
-  const closeBuyBtn = document.getElementById('close-buy');
   
   let currentUser = null;
 
-  // 1. Auth Listener
-  // *** CRITICAL CHANGE HERE TO FIX THE REDIRECT LOOP ***
+  // --- CORE AUTH LOGIC (PREVENTS LOOP) ---
   onAuthStateChanged(auth, (user) => {
-    // Wrap the sensitive logic in a small delay to allow Firebase Persistence 
-    // to load the token from local storage first.
-    setTimeout(() => {
-        if (!user) {
-            console.log("No user session found after persistence check. Redirecting to login.");
-            window.location.href = 'login.html';
-            return;
+    if (user) {
+      // User is logged in. 
+      // 1. Hide Loader, Show Dashboard
+      pageLoader.style.display = 'none';
+      dashboardContent.style.display = 'flex';
+      
+      // 2. Initialize Data
+      currentUser = user;
+      const displayName = user.displayName || user.email.split('@')[0];
+      sideUser.textContent = displayName;
+      greeting.textContent = `Welcome, ${displayName}`;
+      
+      document.getElementById('pay-email-hidden').value = user.email;
+      document.getElementById('pay-name-hidden').value = displayName;
+
+      // 3. Listen to Balance
+      onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+        if (docSnap.exists()) {
+          balanceEl.textContent = formatCurrency(docSnap.data().balance || 0);
         }
-        
-        // If user is found, proceed with dashboard initialization:
-        currentUser = user;
-        
-        // FIX: User Name Personalization
-        const displayName = user.displayName || user.email.split('@')[0];
-        sideUser.textContent = displayName;
-        greeting.textContent = `Welcome, ${displayName}`;
-        
-        // Set hidden fields for custom Paystack form
-        payEmailHidden.value = user.email;
-        payNameHidden.value = displayName;
+      });
 
-        // 2. Real-time Balance
-        onSnapshot(doc(db, "users", user.uid), (doc) => {
-          if (doc.exists()) {
-            const bal = doc.data().balance || 0;
-            balanceEl.textContent = formatCurrency(bal);
-          } else {
-            balanceEl.textContent = '₦0.00';
-          }
-        });
+      // 4. Load Transactions
+      loadTransactions(user.uid);
 
-        // 3. Load Transactions
-        loadTransactions(user.uid);
-    }, 150); // 150ms delay is usually safe for persistence loading
-  });
-  // *** END OF CRITICAL CHANGE ***
-
-  // --- NAVIGATION & MODALS ---
-  
-  // FIX: Open Wallet Page
-  openWalletBtn.addEventListener('click', () => {
-    window.location.href = 'wallet.html';
+    } else {
+      // User is NOT logged in.
+      // Redirect immediately. Loader is still visible covering the screen.
+      window.location.href = 'login.html';
+    }
   });
 
-  // Fund Wallet Modal
-  openAddMoneyBtn.addEventListener('click', () => {
-    addMoneyModal.classList.add('open');
-  });
-  closeAddMoneyBtn.addEventListener('click', () => {
-    addMoneyModal.classList.remove('open');
-  });
+  // --- REST OF APP LOGIC ---
 
-  // Buy Number Modal
-  openBuyBtn.addEventListener('click', () => {
-    buyModal.classList.add('open');
-  });
-  closeBuyBtn.addEventListener('click', () => {
-    buyModal.classList.remove('open');
-  });
-
-  // Logout
   document.getElementById('btn-logout').addEventListener('click', () => {
     signOut(auth).then(() => window.location.href = 'login.html');
   });
 
-  // --- FUNCTIONALITY: CUSTOM PAYSTACK INTEGRATION ---
+  document.getElementById('open-wallet').addEventListener('click', () => window.location.href = 'wallet.html');
+  
+  // Modals
+  const amModal = document.getElementById('add-money-modal');
+  document.getElementById('open-add-money').addEventListener('click', () => amModal.classList.add('open'));
+  document.getElementById('close-add-money').addEventListener('click', () => amModal.classList.remove('open'));
 
-  depositForm.addEventListener('submit', (e) => {
+  const bModal = document.getElementById('buy-modal');
+  document.getElementById('open-buy-modal').addEventListener('click', () => bModal.classList.add('open'));
+  document.getElementById('close-buy').addEventListener('click', () => bModal.classList.remove('open'));
+
+  // Paystack
+  document.getElementById('deposit-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const amount = Number(payAmountInput.value);
-    const email = payEmailHidden.value;
+    const amount = Number(document.getElementById('pay-amount').value);
+    const email = document.getElementById('pay-email-hidden').value;
+    const btn = document.getElementById('start-paystack-submit');
     
-    if (!amount || amount < 50) {
-      alert("Minimum deposit is ₦50");
-      return;
-    }
+    if (amount < 50) { alert("Minimum ₦50"); return; }
+    
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
 
-    // Disable button to prevent double-click while Paystack loads
-    startPaySubmitBtn.disabled = true;
-
-    // Open Paystack inline pop-up
-    PaystackPop.setup({
+    const handler = PaystackPop.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: email,
-      amount: amount * 100, // in kobo
+      amount: amount * 100,
       currency: 'NGN',
-      ref: 'SL-' + Math.floor((Math.random() * 1000000000) + 1), // Unique reference
-      callback: function(response) {
-        // Payment success: Update Firestore
-        processDeposit(amount, response.reference);
+      ref: 'SL-' + Math.floor((Math.random() * 1000000000) + 1),
+      callback: function(res) {
+        processDeposit(amount, res.reference);
       },
       onClose: function() {
-        // Re-enable button if payment window is closed
-        startPaySubmitBtn.disabled = false;
+        btn.disabled = false;
+        btn.textContent = 'Pay Now (₦)';
       }
-    }).openIframe();
+    });
+    handler.openIframe();
   });
 
   async function processDeposit(amount, ref) {
-    addMoneyModal.classList.remove('open');
-    payAmountInput.value = '';
-    startPaySubmitBtn.disabled = false; // Re-enable button
+    amModal.classList.remove('open');
+    document.getElementById('start-paystack-submit').disabled = false;
+    document.getElementById('start-paystack-submit').textContent = 'Pay Now (₦)';
+    document.getElementById('pay-amount').value = '';
 
     try {
       const userRef = doc(db, "users", currentUser.uid);
-      
-      // 1. Record the Transaction
       await addDoc(collection(db, "users", currentUser.uid, "transactions"), {
-        type: 'deposit',
-        amount: amount,
-        date: new Date().toISOString(),
-        reference: ref,
-        note: 'Wallet Funding (Paystack)'
+        type: 'deposit', amount: amount, date: new Date().toISOString(),
+        reference: ref, note: 'Wallet Funding (Paystack)'
       });
-      
-      // 2. Update the Balance using Firebase Transaction for safety
-      await runTransaction(db, async (transaction) => {
-        const sfDoc = await transaction.get(userRef);
-        // Safely increment the balance
+      await runTransaction(db, async (t) => {
+        const sfDoc = await t.get(userRef);
         const newBal = (sfDoc.data().balance || 0) + amount;
-        transaction.update(userRef, { balance: newBal });
+        t.update(userRef, { balance: newBal });
       });
-
-      alert("Deposit Successful! Wallet credited.");
+      alert("Success! Wallet credited.");
     } catch (e) {
-      console.error("Error updating balance:", e);
-      alert("Payment successful but network error updating balance. Contact support with Ref: " + ref);
+      console.error(e);
+      alert("Payment successful but network error. Ref: " + ref);
     }
   }
 
   async function loadTransactions(uid) {
     txList.innerHTML = '<div class="tx-item"><div class="small">Loading...</div></div>';
     const q = query(collection(db, "users", uid, "transactions"), orderBy("date", "desc"), limit(10));
-    
     try {
-      const querySnapshot = await getDocs(q);
+      const snap = await getDocs(q);
       txList.innerHTML = '';
-      if(querySnapshot.empty) {
-        txList.innerHTML = '<div class="tx-item"><div class="small">No transactions yet</div></div>';
-        return;
-      }
-      querySnapshot.forEach((doc) => {
-        const tx = doc.data();
-        const isCredit = tx.type === 'deposit' || tx.type === 'credit';
-        const item = document.createElement('div');
-        item.className = 'tx-item';
-        item.innerHTML = `
-          <div>
-            <div style="font-weight:700">${isCredit ? '+' : '-'} ${formatCurrency(tx.amount)}</div>
-            <div class="small">${new Date(tx.date).toLocaleDateString()} • ${tx.note || tx.type}</div>
-          </div>
-          <div style="font-weight:700; color: ${isCredit ? 'var(--accent)' : '#ff8a8a'}">
-            ${tx.type.toUpperCase()}
-          </div>
-        `;
-        txList.appendChild(item);
+      if(snap.empty) { txList.innerHTML = '<div class="tx-item"><div class="small">No transactions.</div></div>'; return; }
+      snap.forEach(doc => {
+        const d = doc.data();
+        const isCr = d.type === 'deposit';
+        const el = document.createElement('div');
+        el.className = 'tx-item';
+        el.innerHTML = `
+          <div><div style="font-weight:700">${isCr?'+':'-'} ${formatCurrency(d.amount)}</div>
+          <div class="small">${new Date(d.date).toLocaleDateString()}</div></div>
+          <div style="font-weight:700;color:${isCr?'var(--accent)':'#ff8a8a'}">${d.type.toUpperCase()}</div>`;
+        txList.appendChild(el);
       });
-    } catch (e) {
-      txList.innerHTML = '<div class="tx-item"><div class="small">No activity found.</div></div>';
-    }
+    } catch(e) { txList.innerHTML = '<div class="tx-item">Error loading.</div>'; }
   }
 
   function formatCurrency(val) {
-    return '₦' + Number(val).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+    return '₦' + Number(val).toLocaleString(undefined, {minimumFractionDigits:2});
   }
 </script>
 </body>
